@@ -213,7 +213,7 @@ Search::Search(){SetDefaults();	SearchException se;se.ClearLog();};
 void Search::SetDefaults()
 {
 	int i=SI._hdl.getPos();
-	while (i-->0)
+	while (i-->=0)
 	{
 		SI._hdl.pop();
 	}
@@ -956,24 +956,26 @@ bool Search::DownLevel()
 {
 
 	//if the path is equal to the path it started, stop
-	if ((wcscmp(SI._path,_beginPath)==0 && SI._state==SI.EndOfDirectory)||_srchState==ListBoxFull)
+	if (wcscmp(SI._path,_beginPath)==0 && SI._state==SI.EndOfDirectory)
 	{
 		_view->SetButtonText(L"SEARCH");
+		SI.ReInitPrevious();
 		if ((_filesFound+_directoriesFound)<1)
 		{
 			OutputString(L"No search results");
-		}else if (_srchState==ListBoxFull)
-		{
-			_view->ShowNextButton(SW_SHOW);
-		};
-
-
-
+		}
 		StopTimeTracker();
 		_srchState=Ok;
 		return false;
-	};
-	if (SI._state!=SI.Ok)
+	}else if (_srchState==ListBoxFull)
+	{	
+		_view->SetButtonText(L"SEARCH");
+		_view->ShowNextButton(SW_SHOW);
+		StopTimeTracker();
+		_srchState=Ok;
+		return false;
+
+	}else if (SI._state!=SI.Ok)
 	{
 		// make from 'a\b\c\'-> 'a\b\c' -> 'a\b\'
 		wchar_t* path=SI._path;

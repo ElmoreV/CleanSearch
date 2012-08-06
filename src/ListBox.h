@@ -10,8 +10,8 @@ namespace Win
 	class ListBox:public Win::SimpleCtrl
 	{
 	public:
-		ListBox(HWND winParent, int id):SimpleCtrl(winParent,id),_limit(10000){}
-		ListBox(HWND win=0):Win::SimpleCtrl(win),_limit(10000){};
+		ListBox(HWND winParent, int id):SimpleCtrl(winParent,id),_limit(10000),_maxWidth(0),_charWidth(0){}
+		ListBox(HWND win=0):Win::SimpleCtrl(win),_limit(10000),_maxWidth(0),_charWidth(0){};
 		int AddString (std::wstring const & str)
 		{
 			if (GetLineCount()<_limit)
@@ -76,10 +76,18 @@ namespace Win
 		{
 			if (!width)
 			{
-				Font::Stock font(GetFont());
-				long charWidth,charHeight;
-				font.GetTextSize(charWidth,charHeight);
-				SendMessage(LB_SETHORIZONTALEXTENT,(WPARAM)(_maxWidth+3)*charWidth);
+				if (_charWidth==0)
+				{
+					Font::Stock font(GetFont());
+					long charWidth,charHeight;
+					font.GetTextSize(charWidth,charHeight);
+					_charWidth=charWidth;
+				}
+				WPARAM newWidth=(WPARAM)(_maxWidth+3)*_charWidth;
+				if (newWidth)
+				{
+					SendMessage(LB_SETHORIZONTALEXTENT,newWidth);
+				}
 				return;
 			}
 			SendMessage(LB_SETHORIZONTALEXTENT,(WPARAM)width);
@@ -88,6 +96,7 @@ namespace Win
 	private:
 		unsigned int _limit;
 		unsigned int _maxWidth;
+		unsigned int _charWidth;
 	};
 
 	class ListBoxCreator:public ControlCreator

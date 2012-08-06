@@ -11,8 +11,9 @@ namespace Win
 	{
 	public:
 		StockObject (int type)
-			: _obj (::GetStockObject (type))
-		{}
+			: _obj (::GetStockObject (type)){}
+		~StockObject()
+		{::DeleteObject(_obj);}
 		operator HGDIOBJ () const { return _obj; }
 	protected:
 		HGDIOBJ _obj;

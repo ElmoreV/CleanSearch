@@ -5,7 +5,7 @@
 #include<ctime>
 #include<vector>
 #include"View.h"
-//#include "List.h"
+
 /* ::FindFirstFile, ::FindNextFile and ::FindClose uses Kernel32.dll*/
 
 #define DIR_COUNT 1
@@ -43,13 +43,17 @@ class SearchHandleVector
 {
 public:
 	SearchHandleVector():_position(-1)
-	{}
+	{
+		ZeroMemory(_handle,sizeof(_handle));
+	}
 	void push(HANDLE h){
 		_handle[++_position]=h;
 	};
 	int pop()
 	{
-		return ::FindClose(_handle[_position--]);//return nonzero if succeeds, else 0
+		bool success=FindClose(_handle[_position])==TRUE?true:false;//return nonzero if succeeds, else 0
+		_handle[_position--]=0;//Reset to 0;
+		return success;
 	}
 	int& getPos() {return _position; }
 	operator HANDLE() const {return _handle[_position]; }
