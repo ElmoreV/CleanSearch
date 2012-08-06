@@ -15,7 +15,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, 
 	try
 	{
 		Win::Class winclass(hInstance,L"mainclass",Win::WndProc);
-		//	winclass.SetMenu(IDC_MENU);
 		winclass.SetResIcons(IDI_ICON1);
 		winclass.Register();
 		Win::Creator winMaker(winclass);

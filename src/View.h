@@ -190,7 +190,6 @@ public:
 	}
 
 private:
-
 	int _borderSpacing;
 	int _controlSpacing;
 	int _butW;
