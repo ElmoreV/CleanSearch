@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, 
 		winclass.Register();
 		Win::Creator winMaker(winclass);
 		TopController Ctrl;
-		wchar_t title[255]=L"The Long Awaited: CleanSearch ";
+		wchar_t title[255]=L"Now with much more minor tweaks, CleanSearch ";
 		wcscat_s(title,255,version);
 		Win::Dow win(winMaker.Create(Ctrl,title));
 		win.Show(cmdShow);
