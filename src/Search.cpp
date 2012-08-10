@@ -81,7 +81,7 @@ void Uncapitalize(wchar_t* caps)//3555 executions per ms
 //WcsLetComb:
 //Return true when combination is in str, else false
 //11528 Executions per sec
-bool WcsLetComb(const wchar_t* str, const wchar_t* letterCombination)//returns true when combination is in str
+bool WcsLetComb(const wchar_t* str, const wchar_t* letterCombination)
 {
 	//Check if there is something to check. If not, then quit
 	if (!*letterCombination)
@@ -94,9 +94,10 @@ bool WcsLetComb(const wchar_t* str, const wchar_t* letterCombination)//returns t
 		{
 			p=str;//Replace the values, because resetting them with the '-' operator takes longer
 			startLetComb=letterCombination;
-			while (*++p==*++startLetComb)//Check until they aren't equal anymore, or letterCombination iterates to '\0', which means a match
+			startLetComb++;
+			while (*++p==*startLetComb)//Check until they aren't equal anymore, or letterCombination iterates to '\0', which means a match
 			{
-				if(!*startLetComb)
+				if(!*++startLetComb)
 				{return true;}
 			}
 		}
