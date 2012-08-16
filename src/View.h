@@ -9,8 +9,8 @@ class View
 public:
 	View(Win::Dow winParent):_radioH(20),_borderSpacing(20),_butW(70),_butH(30),_controlSpacing(5),_editH(20),_checkH(25),_checkW(300)
 	{
-		Win::Font::Stock defaultF(DEFAULT_GUI_FONT);
-		Win::Font::OemFixed fixed;
+		Win::Font defaultF(DEFAULT_GUI_FONT);
+		Win::OemFixedFont fixed;
 		//Main query line
 		Win::EditCreator edit(winParent,2);
 		_edit.Init(edit.Create(L"Insert query here (e.g. \"music?\" or \".mid|.mp3\") "));

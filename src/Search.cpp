@@ -169,32 +169,20 @@ bool SearchItem::Append(const wchar_t* appendix)
 }
 inline bool SearchItem::IsDirectory()
 {
-	if (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-	{
-		return true;
-	};
-	return false;
+	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 };
 inline bool SearchItem::IsReparsePoint()
 {
-	if (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)
-	{
-		return true;
-	};
-	return false;
+	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT);
 };
 inline bool SearchItem::IsDots()
 {
-	if (*_fileAtt.cFileName=='.')
-	{
-		return true;
-	}
-	return false;	
+	return (*_fileAtt.cFileName=='.');
 }
-inline bool SearchItem::IsFile()
+/*inline bool SearchItem::IsFile()//Huh?
 {
 	return false;
-};
+};*/
 unsigned long long int SearchItem::GetFileSize()
 {
 	unsigned long long int a=(unsigned long long int)((_fileAtt.nFileSizeHigh<<16)+_fileAtt.nFileSizeLow);

@@ -10,32 +10,81 @@ namespace Win
 	class StockObject
 	{
 	public:
-		StockObject (int type)
-			: _obj (::GetStockObject (type)){}
+		StockObject(int type=0):_obj(::GetStockObject(type)),_objOld(0),_hdc(0)
+		{}
 		~StockObject()
-		{::DeleteObject(_obj);}
-		operator HGDIOBJ () const { return _obj; }
+		{DeleteObject(_obj);}
+		operator HGDIOBJ () const
+		{ return _obj; }
+		//Select the new object and store the old one
+		bool Select(HDC hdc)
+		{
+			HGDIOBJ tempOld=::SelectObject(hdc,_obj);
+			if (tempOld!=INVALID_HANDLE_VALUE)
+			{return false;}
+			else
+			{
+				_hdc=hdc;
+				_objOld=tempOld;
+				return true;
+			}
+		};
+		//Select the old object (if and only if the current one belongs to this object)
+		bool Unselect()
+		{
+			if (!_hdc)
+			{return false;}
+			HGDIOBJ tempOld=::SelectObject(_hdc,_objOld);
+			if (tempOld==INVALID_HANDLE_VALUE)
+			{return false;}
+			if (tempOld!=_obj)//The wrong one is unselected
+			{
+				SelectObject(_hdc,tempOld);//So select it back
+				return false;
+			}
+
+		};
 	protected:
 		HGDIOBJ _obj;
+		HDC _hdc;
+		HGDIOBJ _objOld;
 	};
-
-	class StockObjectHolder
+	class Font:public StockObject
 	{
 	public:
-		StockObjectHolder (HDC hdc, int type)
-			: _hdc (hdc)
+		//If you get a stocktype, just initialize with it
+		Font(int type=0):StockObject(type)
+		{}
+		//If you get a font, well, than you have to use the font
+		Font(HFONT font)
+		{_obj=font;}
+		operator HFONT() const{return reinterpret_cast<HFONT>(_obj);}
+		void SetTextColor(int r, int g, int b)
+		{_oldColor=::SetTextColor(_hdc,RGB(r,g,b));};
+		void UnsetTextColor()
 		{
-			_hObjOld = ::SelectObject (_hdc, StockObject (type));
+			COLORREF tempColor=::SetTextColor(_hdc,_oldColor);
+			if (tempColor!=_color)
+			{::SetTextColor(_hdc,tempColor);}
 		}
-
-		~StockObjectHolder ()
-		{
-			::SelectObject (_hdc, _hObjOld);
-		}
-	private:
-		HGDIOBJ  _hObjOld;
-		HDC      _hdc;
+		void GetTextSize(long & width, long & height);
+	protected:
+		COLORREF _color;
+		COLORREF _oldColor;
 	};
+	class OemFixedFont:public Font
+	{
+	public:
+		OemFixedFont():Font(OEM_FIXED_FONT)
+		{}
+	};
+	class SystemFixedFont:public Font
+	{
+	public:
+		SystemFixedFont():Font(SYSTEM_FIXED_FONT)
+		{}
+	};
+	/*
 
 	namespace Font
 	{
@@ -77,6 +126,36 @@ namespace Win
 			};
 		};
 	}
+	class StockObject
+	{
+	public:
+		StockObject (int type)
+			: _obj (::GetStockObject (type)){}
+		~StockObject()
+		{::DeleteObject(_obj);}
+		operator HGDIOBJ () const { return _obj; }
+	protected:
+		HGDIOBJ _obj;
+	};
+
+	class StockObjectHolder
+	{
+	public:
+		StockObjectHolder (HDC hdc, int type)
+			: _hdc (hdc)
+		{
+			_hObjOld = ::SelectObject (_hdc, StockObject (type));
+		}
+
+		~StockObjectHolder ()
+		{
+			::SelectObject (_hdc, _hObjOld);
+		}
+	private:
+		HGDIOBJ  _hObjOld;
+		HDC      _hdc;
+	};
+	*/
 };
 
 #endif

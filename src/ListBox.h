@@ -78,7 +78,7 @@ namespace Win
 			{
 				if (_charWidth==0)
 				{
-					Font::Stock font(GetFont());
+					Font font(GetFont());
 					long charWidth,charHeight;
 					font.GetTextSize(charWidth,charHeight);
 					_charWidth=charWidth;
