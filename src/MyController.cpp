@@ -99,7 +99,7 @@ bool TopController::OnControl (Win::Dow control, int controlId, int notifyCode)
 		_srch.SetFileSizeInput(_view->GetFileSizeInput().c_str());
 		_srch.SetBegin(_view->GetInput2().c_str());
 		_srch.SetSearchInput(_view->GetInput().c_str());
-		_srch.Find();
+		_srch.Find(true);
 		OutputStatistics();
 		return true;
 	}
@@ -109,7 +109,7 @@ bool TopController::OnControl (Win::Dow control, int controlId, int notifyCode)
 		if (_view->GetRadio()){_view->SetButtonText(L"STOP!");};
 		_srch.ContinueTimeTracker();
 		_view->ClearList();
-		_srch.Continue();
+		_srch.Find(false);
 
 		OutputStatistics();
 		return true;
@@ -121,8 +121,7 @@ bool TopController::OnTimer (unsigned int TimerId, TIMERPROC TimerProc)
 	if (TimerId==1)
 	{
 		::KillTimer(_h,1);
-	   
-		_srch.Continue();
+	    _srch.Find(false);
 		
 		OutputStatistics();
 	}

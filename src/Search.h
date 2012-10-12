@@ -112,8 +112,7 @@ public:
 	void SetSearchInput(const wchar_t* input=L"");
 	void SetFileSizeInput(const wchar_t* input=L"");
 	void SetWindow(HWND h){_h=h;};
-	bool Find();//Search
-	bool Continue();
+	bool Find(bool firstLoop);
 	bool CheckWord();
 	bool CheckFileSize();
 	bool OpenDir();
@@ -124,6 +123,7 @@ public:
 	void StopTimeTracker(){_totalTimeTracked+=(clock()-_startTimeTracked); _startTimeTracked=clock();}
 	void ContinueTimeTracker(){_startTimeTracked=clock();}
 private:
+	void SearchLoop();
 	void SetDefaults();
 	void ConvertMacros(wchar_t* input);
 	bool OptimizeCriteria(unsigned int begin, int* end);

@@ -63,7 +63,7 @@ private:
 	std::wfstream _file;
 	
 };
-
+//Changes all capitals in the string to lowercase
 void Uncapitalize(wchar_t* caps)//3555 executions per ms
 {
 	unsigned int i=0;
@@ -105,7 +105,7 @@ bool WcsLetComb(const wchar_t* str, const wchar_t* letterCombination)
 	}
 	return false;
 }
-
+//Select an item defined a fullpath 'path'
 bool SearchItem::Select(const wchar_t* path)
 {
 	_hdl.push(::FindFirstFile(path,&_fileAtt));
@@ -116,6 +116,7 @@ bool SearchItem::Select(const wchar_t* path)
 	};
 	return true;
 }
+//Get the first item of path
 bool SearchItem::Init(const wchar_t* beginPath)
 {
 	wcscpy_s(_path,MAX_PATH,beginPath);
@@ -130,6 +131,7 @@ bool SearchItem::Init(const wchar_t* beginPath)
 	_path[wcslen(_path)-1]='\0';
 	return true;
 }
+//Go up one level
 bool SearchItem::ReInitPrevious()
 {
 	if (_state!=NotOpenable)
@@ -150,6 +152,8 @@ bool SearchItem::ReInitPrevious()
 
 	}
 }
+//Append a directory name to current pathname
+//Go from "X:\" to "X:\appendix\"
 bool SearchItem::Append(const wchar_t* appendix)
 {
 	wcscat_s(_path,MAX_PATH,appendix);
@@ -167,6 +171,7 @@ bool SearchItem::Append(const wchar_t* appendix)
 	return true;
 
 }
+//Short checks
 inline bool SearchItem::IsDirectory()
 {
 	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
@@ -179,17 +184,10 @@ inline bool SearchItem::IsDots()
 {
 	return (*_fileAtt.cFileName=='.');
 }
-/*inline bool SearchItem::IsFile()//Huh?
-{
-	return false;
-};*/
+//Filesize is QWORD=8 bytes
 unsigned long long int SearchItem::GetFileSize()
 {
 	unsigned long long int a=(unsigned long long int)((_fileAtt.nFileSizeHigh<<16)+_fileAtt.nFileSizeLow);
-	if (a<0)
-	{
-		return false;
-	}
 	return a;
 }
 
@@ -210,6 +208,8 @@ void Search::SetDefaults()
 	_fileCount=0;
 	_directoriesFound=0;
 	_filesFound=0;
+	//Initialize what directory is the Windows directory
+	//GetWindowsDirectory return 0 on error
 	if (::GetWindowsDirectoryW(_windowsPathName,MAX_PATH)==0)
 	{
 		wcscpy_s(_windowsPathName,L"C:\\");
@@ -261,21 +261,8 @@ bool Search::OutputString(const wchar_t* string)
 	};
 	return true;
 }
-bool Search::Find()
+void Search::SearchLoop()
 {
-	SetDefaults();
-	
-	if (!_caseSensitive)
-	{
-		for (unsigned int i=0;i<_criteria.size();i++)
-		{
-			Uncapitalize(_criteria[i]._query);
-		}
-	}
-	if (!SI.Init(_beginPath)){
-		SearchException se(L"Could not find path: ");
-		se.AppendBasicLog(SI.GetPath());
-	};
 	while(true)
 	{
 		if (!DownLevel())
@@ -300,34 +287,32 @@ bool Search::Find()
 					OutputString(w.c_str());
 					if(_srchState==Ok)
 					{
-					_directoriesFound++;
-					};				
-				};
+						_directoriesFound++;
+					};
+				}
 				if (_srchState==Ok)
 				{
 					_directoryCount++;
 					NextItem();
 				}
-			}
-			else if (SI.IsDirectory())
+			}else if (SI.IsDirectory())
 			{
-				if (!_fsValid && CheckWord())//Only check when you don't search on filesize
+				if (!_fsValid && CheckWord())
 				{
 					std::wstring w(SI.GetPath());
 					w+=SI.GetName();
 					OutputString(w.c_str());
 					if(_srchState==Ok)
 					{
-					_directoriesFound++;
-					};				
+						_directoriesFound++;
+					};
 				};
 				if(_srchState==Ok)
 				{
 					_directoryCount++;
 					OpenDir();
 				}
-			}
-			else
+			}else
 			{
 				if (CheckWord() && CheckFileSize())
 				{
@@ -347,85 +332,29 @@ bool Search::Find()
 			};
 		};
 	};
-	return 0;
-};
-bool Search::Continue()
+}
+bool Search::Find(bool firstLoop)
 {
-
-	_cycleTimer=clock();
-	while(true)
+	if (firstLoop)
 	{
-		if (!DownLevel())
+		SetDefaults();
+		if (!_caseSensitive)
 		{
-			break;
+			for (unsigned int i=0;i<_criteria.size();i++)
+			{
+				Uncapitalize(_criteria[i]._query);
+			}
 		}
-		while (_srchState==Ok && SI._state==SI.Ok)
-		{
-			if (SI.IsDots())
-			{
-				NextItem();
-				if (SI.IsDots())
-				{
-					NextItem();
-				};
-			}else if (SI.IsReparsePoint())
-			{
-				if (!_fsValid && CheckWord())
-				{
-					std::wstring w(SI.GetPath());
-					w+=SI.GetName();
-					OutputString(w.c_str());
-					if(_srchState==Ok)
-					{
-					_directoriesFound++;
-					};
-				};
-				if (_srchState==Ok)
-				{
-					_directoryCount++;
-					NextItem();
-				}
-			}
-			else if (SI.IsDirectory())
-			{
-				if (!_fsValid && CheckWord())
-				{
-					std::wstring w(SI.GetPath());
-					w+=SI.GetName();
-					OutputString(w.c_str());
-					if(_srchState==Ok)
-					{
-					_directoriesFound++;
-					};
-				};
-				if(_srchState==Ok)
-				{
-					_directoryCount++;
-					OpenDir();
-				}
-			}
-			else
-			{
-				if (CheckWord() && CheckFileSize())
-				{
-					std::wstring w(SI.GetPath());
-					w+=SI.GetName();
-					OutputString(w.c_str());
-					if(_srchState==Ok)
-					{
-					_filesFound++;
-					}
-				};
-				if(_srchState==Ok)
-				{
-					NextItem();
-					_fileCount++;
-				}
-			};
+		if (!SI.Init(_beginPath)){
+			SearchException se(L"Could not find path: ");
+			se.AppendBasicLog(SI.GetPath());
 		};
-	};
+	}else
+	{_cycleTimer=clock();}
+	SearchLoop();
 	return 0;
-};
+}
+
 void Search::SetBegin(const wchar_t* begin)
 {
 	//copy the path to the begin directory
@@ -992,7 +921,7 @@ bool Search::DownLevel()
 	}
 	if ((clock()-_cycleTimer)>=33 && _stable)
 	{
-		SetTimer(_h,1,1,0);
+		SetTimer(_h,1,1,0);//Only mention of _h, ever, can be circumvented using View
 		return false;
 	}
 	return true;
@@ -1001,14 +930,17 @@ bool Search::OpenDir()
 {
 	if (SI.IsDirectory())
 	{		
-		if (!(_windows) && wcscmp(SI._fileAtt.cFileName,_windowsFileName/*L"Windows"*/)==0 &&
-			(wcscmp(SI._path,_windowsUncapPathName/*L"c:\\"*/)==0||wcscmp(SI._path,_windowsPathName/*L"C:\\"*/)==0) )
+		if (!(_windows) && //Check if we want to skip the Windows folder
+			(wcscmp(SI._fileAtt.cFileName,_windowsFileName/*L"Windows"*/)==0 &&
+			((wcscmp(SI._path,_windowsUncapPathName/*L"c:\\"*/)==0)||(wcscmp(SI._path,_windowsPathName/*L"C:\\"*/)==0))) 
+			)
 		{
 			NextItem();
 			return true;
 		}
 		else
 		{
+			//Open directory
 			if (SI.Append(SI._fileAtt.cFileName))
 			{
 				return true;
