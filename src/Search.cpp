@@ -174,11 +174,11 @@ bool SearchItem::Append(const wchar_t* appendix)
 //Short checks
 inline bool SearchItem::IsDirectory()
 {
-	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;
 };
 inline bool SearchItem::IsReparsePoint()
 {
-	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT);
+	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)?true:false;
 };
 inline bool SearchItem::IsDots()
 {
@@ -364,8 +364,8 @@ void Search::SetBegin(const wchar_t* begin)
 	for (;i<wcslen(_beginPath);i++)
 	{
 		//check if it's a '/'
-		if (_beginPath[i]==L'/')
 		//change it into '\'
+		if (_beginPath[i]==L'/')
 		{_beginPath[i]=L'\\';}
 	}
 	//add a '\' to the end if it is not 
@@ -894,7 +894,7 @@ bool Search::DownLevel()
 		wchar_t* path=SI._path;
 		bool j=0;
 		path+=wcslen(path);
-		while(!(--path<SI._path))
+		while(--path>=SI._path)
 		{
 			if (*path==L'\\')
 			{
