@@ -105,104 +105,15 @@ bool WcsLetComb(const wchar_t* str, const wchar_t* letterCombination)
 	}
 	return false;
 }
-//Select an item defined a fullpath 'path'
-bool SearchItem::Select(const wchar_t* path)
-{
-	_hdl.push(::FindFirstFile(path,&_fileAtt));
-	if (_hdl==INVALID_HANDLE_VALUE)
-	{
-		_state=NotOpenable;
-		return false;
-	};
-	return true;
-}
-//Get the first item of path
-bool SearchItem::Init(const wchar_t* beginPath)
-{
-	wcscpy_s(_path,MAX_PATH,beginPath);
-	wcscat_s(_path,MAX_PATH,L"*");
-	_hdl.push(::FindFirstFile(_path,&_fileAtt));
-	if (_hdl==INVALID_HANDLE_VALUE)
-	{
-		_state=NotOpenable;
-		_path[wcslen(_path)-1]='\0';
-		return false;
-	};
-	_path[wcslen(_path)-1]='\0';
-	return true;
-}
-//Go up one level
-bool SearchItem::ReInitPrevious()
-{
-	if (_state!=NotOpenable)
-	{
-		if (_hdl.pop())
-		{
-			_state=Ok;
-			return true;
-		} else 
-		{
-			_state=FindCloseError;
-			return false;
-		}
-	}else
-	{
-		_hdl.getPos()-=1;
-		return true;
 
-	}
-}
-//Append a directory name to current pathname
-//Go from "X:\" to "X:\appendix\"
-bool SearchItem::Append(const wchar_t* appendix)
-{
-	wcscat_s(_path,MAX_PATH,appendix);
-	wcscat_s(_path,MAX_PATH,L"\\*");
-	_hdl.push(::FindFirstFile(_path,&_fileAtt));
-	if (_hdl==INVALID_HANDLE_VALUE)
-	{
-		_state=NotOpenable;
-		_path[wcslen(_path)-1]='\0';
-
-		return false;
-	};
-	_state=Ok;
-	_path[wcslen(_path)-1]='\0';
-	return true;
-
-}
-//Short checks
-inline bool SearchItem::IsDirectory()
-{
-	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;
-};
-inline bool SearchItem::IsReparsePoint()
-{
-	return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)?true:false;
-};
-inline bool SearchItem::IsDots()
-{
-	return (*_fileAtt.cFileName=='.');
-}
-//Filesize is QWORD=8 bytes
-unsigned long long int SearchItem::GetFileSize()
-{
-	unsigned long long int a=(unsigned long long int)((_fileAtt.nFileSizeHigh<<16)+_fileAtt.nFileSizeLow);
-	return a;
-}
 
 Search::Search(){SetDefaults();	SearchException se;se.ClearLog();};
 void Search::SetDefaults()
 {
-	int i=SI._hdl.getPos();
-	while (i-->=0)
-	{
-		SI._hdl.pop();
-	}
+	SI.Reset();
 	_startTimeTracked=clock();
 	_cycleTimer=_startTimeTracked;
 	_totalTimeTracked=0;
-	SI._state=SI.Ok;
 	_srchState=Ok;
 	_directoryCount=0;
 	_fileCount=0;
@@ -269,14 +180,14 @@ void Search::SearchLoop()
 		{
 			break;
 		}
-		while (SI._state==SI.Ok && _srchState==Ok)
+		while (SI.GetState()==SI.Ok && _srchState==Ok)
 		{
 			if (SI.IsDots())
 			{
-				NextItem();
+				SI.NextItem();
 				if (SI.IsDots())
 				{
-					NextItem();
+					SI.NextItem();
 				};
 			}else if (SI.IsReparsePoint())
 			{
@@ -293,7 +204,7 @@ void Search::SearchLoop()
 				if (_srchState==Ok)
 				{
 					_directoryCount++;
-					NextItem();
+					SI.NextItem();
 				}
 			}else if (SI.IsDirectory())
 			{
@@ -326,7 +237,7 @@ void Search::SearchLoop()
 				};
 				if(_srchState==Ok)
 				{
-					NextItem();
+					SI.NextItem();
 					_fileCount++;
 				}
 			};
@@ -748,8 +659,8 @@ bool Search::CheckWord()
 	wchar_t itemName[MAX_PATH];
 	wchar_t itemName2[MAX_PATH];
 	int end=0;
-	wcscpy_s(itemName,MAX_PATH,SI._fileAtt.cFileName);
-	wcscpy_s(itemName2,MAX_PATH,SI._fileAtt.cFileName);
+	wcscpy_s(itemName,MAX_PATH,SI.GetName());
+	wcscpy_s(itemName2,MAX_PATH,SI.GetName());
 
 	if (!_caseSensitive)
 	{
@@ -855,21 +766,11 @@ bool Search::CheckFileSize()
 		}
 	}
 }
-bool Search::NextItem()	
-{
-	if (::FindNextFile(SI._hdl,&SI._fileAtt))
-	{
-		SI._state=SI.Ok;;
-		return true;
-	};
-	SI._state=SI.EndOfDirectory;
-	return false;
-};
 bool Search::DownLevel()	
 {
 
 	//if the path is equal to the path it started, stop
-	if (wcscmp(SI._path,_beginPath)==0 && SI._state==SI.EndOfDirectory)
+	if (wcscmp(SI.GetPath(),_beginPath)==0 && SI.GetState()==SI.EndOfDirectory)
 	{
 		_view->SetButtonText(L"SEARCH");
 		SI.ReInitPrevious();
@@ -888,13 +789,13 @@ bool Search::DownLevel()
 		_srchState=Ok;
 		return false;
 
-	}else if (SI._state!=SI.Ok)
+	}else if (SI.GetState()!=SI.Ok)
 	{
 		// make from 'a\b\c\'-> 'a\b\c' -> 'a\b\'
-		wchar_t* path=SI._path;
+		wchar_t* path=SI.GetPath();
 		bool j=0;
 		path+=wcslen(path);
-		while(--path>=SI._path)
+		while(--path>=SI.GetPath())
 		{
 			if (*path==L'\\')
 			{
@@ -911,13 +812,13 @@ bool Search::DownLevel()
 		}
 
 		SI.ReInitPrevious();
-		if (SI._state==SI.FindCloseError){
+		if (SI.GetState()==SI.FindCloseError){
 			SearchException se(L"Error while closing a handle!");
 			std::wstring w(SI.GetPath());
 			w+=SI.GetName();
 			se.AppendExtendedLog(w.c_str());
 		};
-		NextItem();
+		SI.NextItem();
 	}
 	if ((clock()-_cycleTimer)>=33 && _stable)
 	{
@@ -931,23 +832,23 @@ bool Search::OpenDir()
 	if (SI.IsDirectory())
 	{		
 		if (!(_windows) && //Check if we want to skip the Windows folder
-			(wcscmp(SI._fileAtt.cFileName,_windowsFileName/*L"Windows"*/)==0 &&
-			((wcscmp(SI._path,_windowsUncapPathName/*L"c:\\"*/)==0)||(wcscmp(SI._path,_windowsPathName/*L"C:\\"*/)==0))) 
+			(wcscmp(SI.GetName(),_windowsFileName/*L"Windows"*/)==0 &&
+			((wcscmp(SI.GetPath(),_windowsUncapPathName/*L"c:\\"*/)==0)||(wcscmp(SI.GetPath(),_windowsPathName/*L"C:\\"*/)==0))) 
 			)
 		{
-			NextItem();
+			SI.NextItem();
 			return true;
 		}
 		else
 		{
 			//Open directory
-			if (SI.Append(SI._fileAtt.cFileName))
+			if (SI.Append(SI.GetName()))
 			{
 				return true;
 			}else 
 			{
 				SearchException Test(L"Could not open directory: ");
-				Test.AppendExtendedLog(SI._path);
+				Test.AppendExtendedLog(SI.GetPath());
 			}
 		}
 	}

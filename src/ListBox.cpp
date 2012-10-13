@@ -1,7 +1,6 @@
 #include "ListBox.h"
 //#include "MyStrings.h"
 #include "shellapi.h"
-#include "C:\Users\Gebruiker\Documents\Elmore\Programmeren\Cleansearch\Search.h"
 
 /*::ShellExecute uses Shell32.dll*/
 

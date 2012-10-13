@@ -5,6 +5,7 @@
 #include<ctime>
 #include<vector>
 #include"View.h"
+#include "SearchItem.h"
 
 /* ::FindFirstFile, ::FindNextFile and ::FindClose uses Kernel32.dll*/
 
@@ -39,59 +40,6 @@ bool WcsLetComb(const wchar_t* str, const wchar_t* letterCombination);
 	int 
 }*/
 
-class SearchHandleVector
-{
-public:
-	SearchHandleVector():_position(-1)
-	{
-		ZeroMemory(_handle,sizeof(_handle));
-	}
-	void push(HANDLE h){
-		_handle[++_position]=h;
-	};
-	int pop()
-	{
-		bool success=FindClose(_handle[_position])==TRUE?true:false;//return nonzero if succeeds, else 0
-		_handle[_position--]=0;//Reset to 0;
-		return success;
-	}
-	int& getPos() {return _position; }
-	operator HANDLE() const {return _handle[_position]; }
-private:
-	HANDLE _handle[128];
-	int _position;
-	
-};
-
-class Search;
-class SearchItem
-{
-public:
-	friend class Search;
-	enum Status
-	{
-		Ok,
-		EndOfDirectory,
-		NotOpenable,
-		FindCloseError
-	};
-	bool Init(const wchar_t* beginPath);
-	bool Append(const wchar_t* appendix);
-	bool ReInitPrevious();
-	bool Select(const wchar_t* path);
-	bool IsReparsePoint();
-	bool IsDirectory();
-	bool IsDots();
-	bool IsFile();
-	unsigned long long int GetFileSize();
-	inline wchar_t* GetPath(){return _path;};
-	inline wchar_t* GetName(){return _fileAtt.cFileName;};Status _state;
-private:
-	SearchHandleVector _hdl;
-	WIN32_FIND_DATA _fileAtt;
-	wchar_t _path[MAX_PATH];
-	
-};
 
 
 class Search
@@ -116,7 +64,6 @@ public:
 	bool CheckWord();
 	bool CheckFileSize();
 	bool OpenDir();
-	bool NextItem();
 	bool DownLevel();
 	bool OutputString(const wchar_t* string);
 	unsigned long GetItem(int index);
