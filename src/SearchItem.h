@@ -41,7 +41,7 @@ public:
 	bool Select(const wchar_t* path);
 	inline bool IsDirectory(){return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;};
 	inline bool IsReparsePoint(){return (_fileAtt.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)?true:false;};
-	inline bool IsDots(){return (*_fileAtt.cFileName=='.');}
+	bool IsDots();
 	unsigned long long int GetFileSize();
 	inline wchar_t* GetPath(){return _path;};
 	inline wchar_t* GetName(){return _fileAtt.cFileName;};

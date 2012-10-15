@@ -92,3 +92,15 @@ unsigned long long int SearchItem::GetFileSize()
 	unsigned long long int a=(unsigned long long int)((_fileAtt.nFileSizeHigh<<16)+_fileAtt.nFileSizeLow);
 	return a;
 }
+bool SearchItem::IsDots()
+{
+	if(*_fileAtt.cFileName!='.')
+		return false;
+	if (
+		*(_fileAtt.cFileName+1)=='\0'||
+		(*(_fileAtt.cFileName+1)=='.'&&*(_fileAtt.cFileName+2)=='\0')
+		)
+	{return true;}
+	//It's just a file with a dot at the beginning
+	return false;
+}
