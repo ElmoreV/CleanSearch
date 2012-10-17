@@ -4,7 +4,7 @@
 #include"Proc.h"
 #include"Win.h"
 #include"Mouse.h"
-class CreateData;
+
 /* ::CallWindowProc() uses user32.dll*/
 namespace Win
 {

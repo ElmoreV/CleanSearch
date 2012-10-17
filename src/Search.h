@@ -17,11 +17,11 @@
 
 enum Operator
 {
-		OPRT_AND,
-		OPRT_OR,
-		OPRT_LEFT,
-		OPRT_RIGHT,
-		OPERAND
+	OPRT_AND,
+	OPRT_OR,
+	OPRT_LEFT,
+	OPRT_RIGHT,
+	OPERAND
 };
 
 class SearchNode
