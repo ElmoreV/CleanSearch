@@ -35,11 +35,6 @@ public:
 void Uncapitalize(wchar_t* caps);
 bool WcsLetComb(const wchar_t* str, const wchar_t* letterCombination);
 
-/*class FolderSizeCounter
-{
-	int 
-}*/
-
 
 
 class Search
