@@ -1,65 +1,44 @@
 #include"volume.h"
-#include<windows.h>
-#include<iostream>
-#include<vector>
 
 /* ::FindFirstVolume, ::FindNextVolume, ::FindVolumeClose, ::GetVolumePathNamesForVolumeName and ::GetDiskFreeSpaceEx uses Kernel.dll*/
-
-std::wstring MostImportantVolume()
+Volume::Volume()
 {
-	wchar_t GUID[MAX_PATH];
-	wchar_t pathName[MAX_PATH];
-	wchar_t volume[MAX_PATH];
-	HANDLE hdl;
-	ULARGE_INTEGER freeSpace;
-	ULARGE_INTEGER totalBytes;
-	ULONGLONG maxBytesUsed=0;
-	hdl=::FindFirstVolume(GUID,MAX_PATH);
+	VolumeVec volume;
+	HANDLE hdl=::FindFirstVolume(volume._GUID,MAX_PATH);
 	if (hdl==INVALID_HANDLE_VALUE)
 	{
-		return 0;
+		return;
 	};
 	do
 	{
-	if (!::GetVolumePathNamesForVolumeName(GUID,pathName,MAX_PATH,NULL))
-	{
-		::FindVolumeClose(hdl);
-		return 0;
-	};
-	SetErrorMode(SEM_FAILCRITICALERRORS);
-	if (::GetDiskFreeSpaceEx(pathName,NULL,&totalBytes,&freeSpace))
-	{
-		if ((totalBytes.QuadPart-freeSpace.QuadPart)>maxBytesUsed)
+		if (!::GetVolumePathNamesForVolumeName(volume._GUID,volume._pathName,MAX_PATH,NULL))
 		{
-			maxBytesUsed=(totalBytes.QuadPart-freeSpace.QuadPart);
-			wcscpy_s(volume,MAX_PATH,pathName);
+			::FindVolumeClose(hdl);
+			return;
+		};
+		SetErrorMode(SEM_FAILCRITICALERRORS);
+		
+		if (!::GetDiskFreeSpaceEx(volume._pathName,NULL,(ULARGE_INTEGER*)&volume._totalBytes,(ULARGE_INTEGER*)&volume._freeSpace))
+		{
+			volume._totalBytes=0;
+			volume._freeSpace=0;
+		};
+		SetErrorMode(0);
+		_volumes.push_back(volume);
+	}while(::FindNextVolume(hdl,volume._GUID,MAX_PATH));
+	::FindVolumeClose(hdl);
+}
+std::wstring Volume::GetFullestVolume()
+{
+	unsigned long long maxBytesUsed=0;
+	wchar_t iMax;
+	for (unsigned int i=0;i<_volumes.size();i++)
+	{
+		if ((_volumes[i]._totalBytes-_volumes[i]._freeSpace)>maxBytesUsed)
+		{
+			maxBytesUsed=(_volumes[i]._totalBytes-_volumes[i]._freeSpace);
+			iMax=i;
 		}
 	}
-	SetErrorMode(0);
-	}while(::FindNextVolume(hdl,GUID,MAX_PATH));
-	::FindVolumeClose(hdl);
-	return volume;
+	return _volumes[iMax]._pathName;
 }
-/*
-class Volume
-{
-public:
-	Volume()
-	{
-		_hdl=::FindFirstVolume(_vec[0],MAX_PATH);
-		for (int i=1;;i++)
-		{
-			if (!::FindNextVolume(_hdl,_vec[i],MAX_PATH))
-			{
-				break;
-			};
-		};
-	}
-	~Volume(){}
-	wchar_t* GetPathName(){};
-private:
-	HANDLE _hdl;
-	std::vector <wchar_t*> _vec;
-
-
-};*/

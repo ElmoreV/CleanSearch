@@ -17,7 +17,8 @@ public:
 		//Root directory query
 		Win::EditCreator edit2(winParent,3);
 		std::wstring editText=L"Directory or drive to search in(default is \"";
-		editText+=MostImportantVolume().c_str();
+		Volume volumes;
+		editText+=volumes.GetFullestVolume();
 		editText+=L"\")";
 		_edit2.Init(edit2.Create(editText.c_str()));
 		//Filesize query

@@ -294,7 +294,7 @@ void Search::SetBegin(const wchar_t* begin)
 	//if the input is just '\\', pick the most important volume
 	if (!wcscmp(_beginPath,L"\\"))
 	{
-		wcscpy_s(_beginPath,MAX_PATH,MostImportantVolume().c_str());
+		wcscpy_s(_beginPath,MAX_PATH,_volumes.GetFullestVolume().c_str());
 	}
 	while(true)
 	{	
@@ -327,7 +327,7 @@ void Search::SetBegin(const wchar_t* begin)
 			break;
 		}
 	}
-	wcscpy_s(_beginPath,MAX_PATH,MostImportantVolume().c_str());
+	wcscpy_s(_beginPath,MAX_PATH,_volumes.GetFullestVolume().c_str());
 	return;
 }
 void Search::ConvertMacros(wchar_t* input)

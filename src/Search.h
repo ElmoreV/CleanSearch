@@ -72,6 +72,7 @@ private:
 	//bool CheckCritInput(const wchar_t* input);
 	bool ProcessCriteria(unsigned int begin, int* end,wchar_t* itemName, wchar_t* itemName2);
 	View* _view;
+	Volume _volumes;
 	SearchItem SI;
 	clock_t _startTimeTracked;
 	clock_t _totalTimeTracked;
