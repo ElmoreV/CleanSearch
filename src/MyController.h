@@ -14,11 +14,8 @@ public:
 	void OutputStatistics();
 	bool OnDestroy();
 	bool OnCreate(const Win::CreateData * create);
-	//bool OnPaint();
 	bool OnSize(int width, int height, int flag);
-	//bool OnCommand(int cmdId, bool isAccel);
 	bool OnControl (Win::Dow control, int controlId, int notifyCode);
-	//bool OnCtlColor(HDC hdc,HWND control);
 	bool OnTimer (unsigned int TimerId, TIMERPROC TimerProc);
 	std::auto_ptr<View> _view;
 	Search _srch;

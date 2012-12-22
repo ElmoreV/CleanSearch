@@ -26,7 +26,10 @@ namespace Win
 		}
 		inline void Toggle()
 		{
-			if (IsChecked()){SetCheck(false);}else {SetCheck(true);};
+			if (IsChecked())
+			{SetCheck(false);}
+			else 
+			{SetCheck(true);};
 		}
 	};
 
