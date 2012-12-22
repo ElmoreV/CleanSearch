@@ -14,9 +14,12 @@ bool SearchItem::NextItem()
 {
 	if (::FindNextFile(_hdl,&_fileAtt))
 	{
-		_state=Ok;;
+		_state=Ok;
 		return true;
 	};
+	//When FindNextFile returns 0, it is just the end of directory, mostly.
+	//This also means that no new file name is retrieved.
+	//So change the state to reflect that
 	_state=EndOfDirectory;
 	return false;
 }

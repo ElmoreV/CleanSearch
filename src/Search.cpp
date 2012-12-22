@@ -238,7 +238,14 @@ void Search::SearchLoop()
 				if(_srchState==Ok)
 				{
 					SI.NextItem();
-					_fileCount++;
+					_fileCount++;//Seems like it counts one too much, but the FindFirstFile isn't counted, so it evens out.
+					//This is for the windows/winsxs folder, which often stalls the whole program
+					if ((_fileCount%100==0)&&(clock()-_cycleTimer)>=150 && _stable)
+					{
+						SetTimer(_h,1,1,0);
+						return;
+					}
+					
 				}
 			};
 		};
