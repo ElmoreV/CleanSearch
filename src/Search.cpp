@@ -780,11 +780,12 @@ bool Search::DownLevel()
 	if (wcscmp(SI.GetPath(),_beginPath)==0 && SI.GetState()==SI.EndOfDirectory)
 	{
 		_view->SetButtonText(L"SEARCH");
+		_view->SetSearchMode(false);
 		SI.ReInitPrevious();
 		if ((_filesFound+_directoriesFound)<1)
 		{
 			OutputString(L"No search results");
-		}
+		}	
 		StopTimeTracker();
 		_srchState=Ok;
 		return false;
@@ -792,6 +793,7 @@ bool Search::DownLevel()
 	{	
 		_view->SetButtonText(L"SEARCH");
 		_view->ShowNextButton(SW_SHOW);
+		_view->SetSearchMode(false);
 		StopTimeTracker();
 		_srchState=Ok;
 		return false;

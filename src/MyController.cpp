@@ -29,6 +29,7 @@ bool TopController::OnDestroy()
 bool TopController::OnCreate(const Win::CreateData * create)
 {
 	_view=std::auto_ptr<View>(new View(_h));
+	_view->SetSearchMode(false);
 	return 0;
 };
 bool TopController::OnSize(int width, int height, int flag)
@@ -47,12 +48,12 @@ bool TopController::OnControl (Win::Dow control, int controlId, int notifyCode)
 	}
 	else if (controlId==IDOK && _view.get())//If the _view was initialized and the ID was enter or the main button of "Search" and "Stop"
 	{
-		wchar_t buttontext[8];
-		_view->GetButtonText(buttontext);
+		
 		//If it was the stop button that was clicked
-		if (wcscmp(buttontext,L"STOP!")==0)
+		if (_view->IsSearching())
 		{
-			//Stop all the times, and show the "Continue" button
+			//Stop all the timers, and show the "Continue" button
+			_view->SetSearchMode(false);
 			::KillTimer(_h,1);
 			_srch.StopTimeTracker();
 			_view->SetButtonText(L"SEARCH");
@@ -60,6 +61,7 @@ bool TopController::OnControl (Win::Dow control, int controlId, int notifyCode)
 			return true;
 		}else
 		{
+			_view->SetSearchMode(true);
 			//If it wasn't, don't show the "Continue" button
 			_view->ShowNextButton(SW_HIDE);
 			//Continue everything, clear the list, initialize everything 
@@ -78,6 +80,7 @@ bool TopController::OnControl (Win::Dow control, int controlId, int notifyCode)
 			_srch.SetSearchInput(_view->GetInput().c_str());
 			//Start searching and output the statistics
 			_srch.Find(true);
+
 			OutputStatistics();
 			return true;
 		}
@@ -92,6 +95,7 @@ bool TopController::OnControl (Win::Dow control, int controlId, int notifyCode)
 		_view->ClearList();
 		_srch.Find(false);
 		OutputStatistics();
+		_view->SetSearchMode(true);
 		return true;
 	}
 	return false;

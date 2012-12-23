@@ -189,7 +189,10 @@ public:
 	{
 		_nextButton.Show(cmd);
 	}
-
+	void SetSearchMode(bool searching)
+	{_isSearching=searching;}
+	bool IsSearching()
+	{return _isSearching;}
 private:
 	int _borderSpacing;
 	int _controlSpacing;
@@ -216,6 +219,6 @@ private:
 	Win::EditController _editCtrl2;
 	Win::EditController _editCtrl3;
 	Win::ListBoxController _listCtrl;
-
+	bool _isSearching;
 	};
 #endif
