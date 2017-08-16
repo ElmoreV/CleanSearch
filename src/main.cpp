@@ -8,7 +8,7 @@
 
 
 
-wchar_t version[255]=L"v0.5.2b";
+wchar_t version[255]=L"v1.0";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdShow)
 {
@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, 
 		winclass.Register();
 		Win::Creator winMaker(winclass);
 		TopController Ctrl;
-		wchar_t title[255]=L"Now with much more minor tweaks, CleanSearch ";
+		wchar_t title[255]=L"Finally finished, enjoy CleanSearch ";
 		wcscat_s(title,255,version);
 		Win::Dow win(winMaker.Create(Ctrl,title));
 		win.Show(cmdShow);

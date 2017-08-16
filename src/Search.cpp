@@ -668,7 +668,7 @@ bool Search::CheckWord()
 	int end=0;
 	wcscpy_s(itemName,MAX_PATH,SI.GetName());
 	wcscpy_s(itemName2,MAX_PATH,SI.GetName());
-
+	
 	if (!_caseSensitive)
 	{
 		Uncapitalize(itemName);
@@ -700,7 +700,7 @@ bool Search::ProcessCriteria(unsigned int begin, int* end, wchar_t* itemName, wc
 	unsigned int critSize=_criteria.size();//Reduce unnesseccary calls
 	for(unsigned int i=begin;i<critSize;i++)
 	{
-		SearchNode sn=_criteria[i];
+		SearchNode& sn=_criteria[i];
 		switch (sn._oprt)
 		{
 		case OPRT_LEFT://the start and every opening bracket '<'
@@ -716,7 +716,7 @@ bool Search::ProcessCriteria(unsigned int begin, int* end, wchar_t* itemName, wc
 				{left=right;}
 				else 
 				{
-					SearchNode sn2=_criteria[i-1];
+					SearchNode& sn2=_criteria[i-1];
 					if (sn2._oprt==OPRT_OR)
 					{left|=right;} 
 					else if (sn2._oprt==OPRT_AND)
@@ -743,7 +743,7 @@ bool Search::ProcessCriteria(unsigned int begin, int* end, wchar_t* itemName, wc
 				{left=right;}
 				else 
 				{
-					SearchNode sn2=_criteria[i-1];
+					SearchNode& sn2=_criteria[i-1];
 					if (sn2._oprt==OPRT_OR)
 					{left|=right;} 
 					else if (sn2._oprt==OPRT_AND)
