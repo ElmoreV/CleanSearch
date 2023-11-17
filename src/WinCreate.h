@@ -19,7 +19,7 @@ namespace Win
 		void SetDefaults();
 		WNDCLASSEX _class;
 		WNDPROC (* _pWndProc);
-		LPCWSTR _name;
+		LPCTSTR _name;
 		HINSTANCE _hInst;
 
 	};

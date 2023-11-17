@@ -16,14 +16,16 @@ Win::Class::Class(HINSTANCE& hInst,LPCTSTR className, WNDPROC WndProc):_hInst(hI
 
 void Win::Class::SetResIcons (int resId)
 {
-    _class.hIcon = reinterpret_cast<HICON> (
+
+
+    _class.hIcon = static_cast<HICON> (
         ::LoadImage (
             _class.hInstance, 
             MAKEINTRESOURCE (resId), 
             IMAGE_ICON, 
             ::GetSystemMetrics (SM_CXICON),
             ::GetSystemMetrics (SM_CYICON),
-            0));
+            LR_DEFAULTCOLOR));
     // Small icon can be loaded from the same resource
     _class.hIconSm = reinterpret_cast<HICON> (
         ::LoadImage (
@@ -42,12 +44,12 @@ void Win::Class::SetDefaults()
 	_class.cbClsExtra			=0;
 	_class.cbWndExtra			=0;
 	_class.hInstance			=_hInst;
-	_class.hIcon				=::LoadIcon(0, MAKEINTRESOURCE(IDI_WINLOGO));
+	_class.hIcon				=::LoadIcon(0, IDI_WINLOGO);
 	_class.hCursor				=::LoadCursor (0, IDC_ARROW);//
 	_class.hbrBackground		=reinterpret_cast<HBRUSH> (COLOR_WINDOW + 1);//
 	_class.lpszMenuName			=0;
 	_class.lpszClassName		=_name;
-	_class.hIconSm				=::LoadIcon(0, MAKEINTRESOURCE(IDI_WINLOGO));
+	_class.hIconSm				=::LoadIcon(0, IDI_WINLOGO);
 };
 
 void Win::Class::Register()
