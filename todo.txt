@@ -1,0 +1,9 @@
+//TODO: 2. Set the right flags for launch.json and tasks.json
+//TODO: 3. Find out the difference between this code and the other codes from the one I'm using
+//TODO: 2. remove the stdc++6.dll dependence
+//TODO: 3. It should not look through the Windows folder
+//TODO: 4. Try to save the last used Base Folder.
+//TODO: 5. Try to resolve some of the ISO warning and the null-pointer-warning
+//TODO: 6. Find out how to create and use a MAKEFILE
+//TODO: 7. Create a test for different platforms
+//TODO: Do I want the error handling on the ShellExecute?
