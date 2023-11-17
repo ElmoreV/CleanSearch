@@ -28,7 +28,7 @@ bool TopController::OnDestroy()
 }
 bool TopController::OnCreate(const Win::CreateData * create)
 {
-	_view=std::auto_ptr<View>(new View(_h));
+	_view=std::unique_ptr<View>(new View(_h));
 	_view->SetSearchMode(false);
 	return 0;
 };

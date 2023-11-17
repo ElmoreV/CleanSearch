@@ -17,7 +17,7 @@ public:
 	bool OnSize(int width, int height, int flag);
 	bool OnControl (Win::Dow control, int controlId, int notifyCode);
 	bool OnTimer (unsigned int TimerId, TIMERPROC TimerProc);
-	std::auto_ptr<View> _view;
+	std::unique_ptr<View> _view;
 	Search _srch;
 };
 
