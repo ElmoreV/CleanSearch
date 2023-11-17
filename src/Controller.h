@@ -15,53 +15,53 @@ namespace Win
 			UINT message, WPARAM wParam, LPARAM lParam);
 	public:
 		virtual ~Controller () {}
-		virtual bool OnCreate (Win::CreateData const * create) throw ()
+		virtual bool OnCreate (Win::CreateData const * create)  
 		{ return false; }
-		virtual bool OnDestroy () throw ()
+		virtual bool OnDestroy ()  
 		{ return false; }
-		virtual bool OnActivate (int type,bool isMinimized, Win::Dow otherWnd)throw ()
+		virtual bool OnActivate (int type,bool isMinimized, Win::Dow otherWnd) 
 		{ return false; }
-		virtual bool OnFocus (Win::Dow winPrev) throw ()
+		virtual bool OnFocus (Win::Dow winPrev)  
 		{ return false; }
-		virtual bool OnSize (int width, int height, int flag) throw ()
+		virtual bool OnSize (int width, int height, int flag)  
 		{ return false; }
-		virtual bool OnPaint () throw ()
+		virtual bool OnPaint ()  
 		{ return false; }
 		virtual bool OnCtlColor(HDC hdc,HWND control)
 		{return false; }
 
-		virtual bool OnCommand (int cmdId, bool isAccel) throw ()
+		virtual bool OnCommand (int cmdId, bool isAccel)  
 		{ return false; }
-		virtual bool OnControl (Win::Dow control, int controlId, int notifyCode) throw ()
+		virtual bool OnControl (Win::Dow control, int controlId, int notifyCode)  
 		{ return false; }
-		virtual bool OnInitPopup (HMENU menu, int pos) throw ()
+		virtual bool OnInitPopup (HMENU menu, int pos)  
 		{ return false; }
-		virtual bool OnInitSystemPopup (HMENU menu, int pos) throw ()
+		virtual bool OnInitSystemPopup (HMENU menu, int pos)  
 		{ return false; }
-		virtual bool OnMenuSelect (int id, int flags, HMENU menu) throw ()
+		virtual bool OnMenuSelect (int id, int flags, HMENU menu)  
 		{ return false; }
 		// Mouse
-		virtual bool OnMouseMove (int x, int y, Win::KeyState kState) throw ()
+		virtual bool OnMouseMove (int x, int y, Win::KeyState kState)  
 		{ return false; }
-		virtual bool OnLButtonDown (int x, int y, Win::KeyState kState) throw ()
+		virtual bool OnLButtonDown (int x, int y, Win::KeyState kState)  
 		{ return false; }
-		virtual bool OnLButtonDoubleClick(int x, int y, Win::KeyState kState) throw()
+		virtual bool OnLButtonDoubleClick(int x, int y, Win::KeyState kState)
 		{return false; }
-		virtual bool OnLButtonUp (int x, int y, Win::KeyState kState) throw ()
+		virtual bool OnLButtonUp (int x, int y, Win::KeyState kState)  
 		{ return false; }
-		virtual bool OnCaptureChanged (Win::Dow newCaptureWin) throw ()
+		virtual bool OnCaptureChanged (Win::Dow newCaptureWin)  
 		{ return false; }
 		// Keyboard
-		virtual bool OnKeyDown (int vKey, int flags) throw ()
+		virtual bool OnKeyDown (int vKey, int flags)  
 		{ return false; }
-		virtual bool OnKeyUp (int vKey, int flags) throw ()
+		virtual bool OnKeyUp (int vKey, int flags)  
 		{ return false; }
 		virtual bool OnTimer (unsigned int TimerId, TIMERPROC TimerProc)
 		{ return false; }
 		virtual bool OnUserMessage (UINT msg, 
 			WPARAM wParam, 
 			LPARAM lParam, 
-			LRESULT & result) throw ()
+			LRESULT & result)  
 		{ return false; }
 		void SetWindowHandle(HWND h){_h=h;}
 	protected:
