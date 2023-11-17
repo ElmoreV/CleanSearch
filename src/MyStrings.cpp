@@ -1,6 +1,8 @@
 #include"MyStrings.h"
 #include<iostream>
-
+/*
+// These functions convert const char* to wchar_t* and other way around. It seems I don't need these anymore
+// They also don't work, since strlen gets undefined when unicode is enabled.
 unsigned int CtoW(wchar_t* _Dest,const char* _Source)
 {
 	unsigned int x=strlen(_Source);
@@ -35,7 +37,7 @@ unsigned int WtoC(char* _Dest,const wchar_t* _Source)
 	_Dest[i]='\0';
 	return 0;
 };
-
+*/
 std::wstring ItoW(unsigned int _i)
 {
 	if (_i==0){std::wstring w=L"0"; return w;};
