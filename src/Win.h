@@ -14,20 +14,21 @@ namespace Win
 		void Init(HWND win){_h=win;}
 		bool Destroy(){return DestroyWindow(_h)?true:false;}
 		operator HWND () {return _h;};
-		template <class T>
 
-		inline T GetLong (int which = GWL_USERDATA)
+		template <class T>
+		inline T GetLong (int which = GWLP_USERDATA)
 		{
 			return reinterpret_cast<T> (::GetWindowLongPtr (_h, which));
 		};
 		template <class T>
-		inline void SetLong (T value, int which = GWL_USERDATA)
+		inline void SetLong (T value, int which = GWLP_USERDATA)
 		{
-			::SetWindowLongPtr (_h, which, reinterpret_cast<long> (value));
+			::SetWindowLongPtr (_h, which, reinterpret_cast<LONG_PTR> (value));
 		};
+
 		HINSTANCE GetInstance()
 		{
-			return GetLong <HINSTANCE> (GWL_HINSTANCE);
+			return GetLong <HINSTANCE> (GWLP_HINSTANCE);
 		};
 		LRESULT SendMessage (UINT msg, WPARAM wparam = 0, LPARAM lparam = 0) const
 		{
